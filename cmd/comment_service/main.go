@@ -1,1 +1,1 @@
-package comment_service
+package main

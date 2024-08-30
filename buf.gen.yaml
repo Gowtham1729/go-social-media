@@ -2,14 +2,16 @@ version: v2
 clean: true
 managed:
   enabled: true
+  disable:
+    - module: buf.build/googleapis/googleapis
   override:
     - file_option: go_package_prefix
       value: gen
 plugins:
-  - remote: buf.build/grpc/go
+  - remote: buf.build/protocolbuffers/go
     out: gen
     opt: paths=source_relative
-  - remote: buf.build/protocolbuffers/go
+  - remote: buf.build/grpc/go
     out: gen
     opt: paths=source_relative
   - remote: buf.build/grpc-ecosystem/gateway
