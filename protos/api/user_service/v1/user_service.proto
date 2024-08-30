@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package user_service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Gowtham1729/go-social-media/pkg/api/user_service/v1;user_service_v1";
+
+service UserService {
+  rpc SignUpUser(SignUpUserRequest) returns (SignUpUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users:signup"
+      body: "*"
+    };
+  }
+  rpc SignInUser(SignInUserRequest) returns (SignInUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users:signin"
+      body: "*"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/users/{username}"
+      body: "user"
+    };
+  }
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{username}"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/v1/users/{username}"
+    };
+  }
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users"
+    };
+  }
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string name = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message SignUpUserRequest {
+  string username = 1;
+  string email = 2;
+  string name = 3;
+  string password = 4;
+}
+
+message SignUpUserResponse {
+  User user = 1;
+}
+
+message SignInUserRequest {
+  string username = 1;
+  string password = 3;
+}
+
+message SignInUserResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  User user = 3;
+}
+
+message UpdateUserRequest{
+  string username = 1;
+  User user = 2;
+}
+
+message UpdateUserResponse{
+  User user = 1;
+}
+
+message GetUserRequest {
+  string username = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  string username = 1;
+}
+
+message DeleteUserResponse {
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_token = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+}
