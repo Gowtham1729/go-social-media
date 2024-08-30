@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	pb "github.com/Gowtham1729/go_social_media/gen/user_service/v1"
+	"github.com/Gowtham1729/go_social_media/internal/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -33,7 +34,13 @@ func (s *UserServer) SignUpUser(ctx context.Context, req *pb.SignUpUserRequest) 
 
 func RunUserServer() {
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 8080))
+	err := config.Load()
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+	cfg := config.Get()
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Server.GrpcPort))
 	if err != nil {
 		fmt.Printf("failed to listen: %v", err)
 	}
@@ -48,7 +55,7 @@ func RunUserServer() {
 	}()
 
 	conn, err := grpc.NewClient(
-		"0.0.0.0:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		fmt.Sprintf("0.0.0.0:%d", cfg.Server.GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Printf("failed to dial server: %v", err)
 	}
@@ -60,7 +67,7 @@ func RunUserServer() {
 	}
 
 	gwServer := &http.Server{
-		Addr:    ":8090",
+		Addr:    fmt.Sprintf(":%d", cfg.Server.HttpPort),
 		Handler: gwmux,
 	}
 	log.Fatalln(gwServer.ListenAndServe())
