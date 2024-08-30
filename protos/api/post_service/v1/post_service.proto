@@ -1,3 +1,40 @@
 syntax = "proto3";
 
 package post_service.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Gowtham1729/go-social-media-app/pkg/api/post_service/v1;post_service_v1";
+
+service PostService {
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {
+    option (google.api.http) = {
+      post: "/v1/posts"
+      body: "*"
+    };
+  }
+
+  rpc DeletePost(DeletePostRequest) returns (DeletePostResponse) {
+    option (google.api.http) = {
+      delete: "/v1/posts"
+    };
+  }
+}
+
+message Post {
+  string id = 1;
+  string user_id = 2;
+  string post = 3;
+}
+
+message CreatePostRequest {
+  Post post = 1;
+}
+
+message CreatePostResponse {}
+
+message DeletePostRequest {
+  string id = 1;
+}
+
+message DeletePostResponse {}
