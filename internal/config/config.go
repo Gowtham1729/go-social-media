@@ -9,10 +9,8 @@ type Config struct {
 	} `mapstructure:"server"`
 
 	Database struct {
-		Host     string `mapstructure:"host"`
-		Port     int    `mapstructure:"port"`
-		Name     string `mapstructure:"name"`
-		User     string `mapstructure:"user"`
+		URI      string `mapstructure:"uri"`
+		DB       string `mapstructure:"db"`
 		Password string `mapstructure:"password"`
 	} `mapstructure:"database"`
 

@@ -16,6 +16,8 @@ WORKDIR /root/
 
 COPY --from=builder /app/main .
 
+COPY config.yaml .
+
 EXPOSE 8080
 EXPOSE 8090
 

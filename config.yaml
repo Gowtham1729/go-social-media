@@ -3,11 +3,8 @@ server:
   http_port: 8090
 
 database:
-  host: localhost
-  port: 27017
-  name: mydb
-  user: root
-  password: root
+  uri: mongodb://localhost:27017/
+  db: mydb
 
 redis:
   host: localhost
