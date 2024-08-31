@@ -6,16 +6,20 @@ import (
 	"fmt"
 	pb "github.com/Gowtham1729/go_social_media/gen/user_service/v1"
 	"github.com/Gowtham1729/go_social_media/internal/config"
+	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type UserServer struct {
@@ -28,12 +32,33 @@ func NewUserServer(db *mongo.Database) *UserServer {
 }
 
 func (s *UserServer) SignUpUser(ctx context.Context, req *pb.SignUpUserRequest) (*pb.SignUpUserResponse, error) {
+	collection := s.db.Collection("users")
+
+	currentTime := timestamppb.New(time.Now().UTC())
+	newUserID := uuid.NewString()
+
+	_, err := collection.InsertOne(
+		context.TODO(),
+		bson.M{
+			"id":         newUserID,
+			"username":   req.Username,
+			"email":      req.Email,
+			"name":       req.Name,
+			"created_at": currentTime,
+			"updated_at": currentTime,
+			"password":   req.Password,
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.SignUpUserResponse{User: &pb.User{
-		Id:        "123456",
-		Username:  "abcdef",
-		Email:     "abc@gmail.com",
-		Name:      "abc def",
-		CreatedAt: nil,
+		Id:        newUserID,
+		Username:  req.Username,
+		Email:     req.Email,
+		Name:      req.Name,
+		CreatedAt: currentTime,
 		UpdatedAt: nil,
 	}}, nil
 }
