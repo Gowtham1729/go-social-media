@@ -47,7 +47,7 @@ type Config struct {
 
 var cfg *Config
 
-func Load() error {
+func Load() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
@@ -56,14 +56,13 @@ func Load() error {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	cfg = &Config{}
 	err = viper.Unmarshal(cfg)
-	return err
-}
-
-func Get() *Config {
-	return cfg
+	if err != nil {
+		return nil, err
+	}
+	return cfg, nil
 }
